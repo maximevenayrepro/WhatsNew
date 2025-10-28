@@ -1,0 +1,76 @@
+---
+description: Enforce timeouts, retries, and parallelism limits for responsive UX
+globs: "server/**/*.py,**/*.py,public/**/*.js"
+alwaysApply: true
+---
+# Performance and Network
+
+## Overview
+This rule ensures the app remains responsive by using timeouts, safe retries, and controlled parallelism for topic fetching and external calls.
+
+## Rule: Fast and controlled network behavior
+1. **Always** set timeouts for HTTP calls (target: 10s upper bound).
+2. **Always** parallelize topic fetches but **limit concurrency** to avoid throttling.
+3. **Always** implement retry with exponential backoff on transient network errors (not on 4xx).
+4. **Never** block the UI thread; show loading states in the frontend.
+5. **Always** cap results per topic (max 5) and validate inputs.
+
+## Common Violations and Solutions
+
+### ❌ BAD: Unbounded request without timeout
+```python
+response = client.get(url)
+```
+
+### ✅ GOOD: Explicit timeout and retry
+```python
+items = retry_with_backoff(lambda: svc.search(topic, timeout_seconds=10), retries=2)
+```
+
+### ❌ BAD: Fire-and-forget parallelism in JS
+```javascript
+topics.map(t => fetchTopic(t));
+```
+
+### ✅ GOOD: Limit concurrency
+```javascript
+const maxConcurrent = 3;
+await runWithConcurrency(topics, maxConcurrent, fetchTopic);
+```
+
+## When You Think You Need Exceptions
+### Small single-topic queries
+Simple sequential call is acceptable if latency is low and predictable.
+
+## Specific Project Patterns
+```python
+# ✅ GOOD: Use asyncio.gather with semaphore to cap concurrency
+```
+
+```javascript
+// ✅ GOOD: Show loading indicator while fetching
+setLoading(true);
+try { /* fetch */ } finally { setLoading(false); }
+```
+
+## Alternative Solutions
+### 1. Cache last successful results short-term (in-memory) to reduce duplicate calls
+### 2. Debounce rapid successive refresh actions
+
+## Tool Configuration (Optional)
+```json
+{
+  "network": {
+    "timeoutMs": 10000,
+    "maxConcurrent": 3
+  }
+}
+```
+
+## Checklist for the Assistant
+- [ ] Set timeouts and retries for external calls
+- [ ] Limit concurrency for topic fetching
+- [ ] Keep UI responsive with loading states
+- [ ] Validate inputs and cap results per topic
+
+

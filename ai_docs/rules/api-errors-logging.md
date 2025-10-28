@@ -1,0 +1,80 @@
+---
+description: Standardize API contracts, error handling, and safe logging for FastAPI
+globs: "server/**/*.py,**/*.py"
+alwaysApply: true
+---
+# API Design, Errors, and Logging
+
+## Overview
+This rule defines consistent API responses, error handling, and logging practices to make the system predictable, debuggable, and safe.
+
+## Rule: Predictable responses and safe logs
+1. **Always** use Pydantic models for requests and responses.
+2. **Always** return appropriate HTTP status codes (4xx client, 5xx server).
+3. **Never** include stack traces or sensitive details in responses.
+4. **Always** log errors with context; **never** log secrets or full payloads.
+5. **Always** map exceptions to typed error responses with a stable shape.
+
+## Common Violations and Solutions
+
+### ❌ BAD: Returning raw dicts with mixed shapes
+```python
+return {"ok": True, "d": result}
+```
+
+### ✅ GOOD: Typed responses
+```python
+class NewsResponse(BaseModel):
+    items: list[NewsItem]
+
+return NewsResponse(items=news_items)
+```
+
+### ❌ BAD: Leaking exception text to client
+```python
+return JSONResponse(status_code=500, content={"error": str(e)})
+```
+
+### ✅ GOOD: Stable error format
+```python
+class ErrorResponse(BaseModel):
+    code: str
+    message: str
+
+return JSONResponse(status_code=500, content=ErrorResponse(code="INTERNAL_ERROR", message="Unexpected error").model_dump())
+```
+
+## When You Think You Need Exceptions
+### Debug builds
+Use structured server logs for details; keep client messages generic.
+
+## Specific Project Patterns
+```python
+# ✅ GOOD: Wrap external API calls and map errors
+try:
+    items = perplexityService.search_topics(topics)
+except ExternalServiceTimeoutError:
+    raise HTTPException(status_code=504, detail="Upstream timeout")
+```
+
+## Alternative Solutions
+### 1. Add minimal log context (request id, handler name)
+### 2. Use FastAPI exception handlers for common errors
+
+## Tool Configuration (Optional)
+```json
+{
+  "logging": {
+    "level": "INFO",
+    "sanitizeKeys": ["authorization", "api_key"]
+  }
+}
+```
+
+## Checklist for the Assistant
+- [ ] Define Pydantic models for all API inputs/outputs
+- [ ] Use correct status codes and a stable error shape
+- [ ] Sanitize logs; never leak secrets to client or logs
+- [ ] Handle external API failures with mapped exceptions
+
+

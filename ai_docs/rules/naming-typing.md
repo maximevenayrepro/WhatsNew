@@ -1,0 +1,114 @@
+---
+description: Enforce clear naming, explicit typing, and consistent style for Python and JS
+globs: "server/**/*.py,**/*.py,public/**/*.js"
+alwaysApply: true
+---
+# Naming, Typing, and Style
+
+## Overview
+This rule enforces explicit typing, readable names, and consistent conventions across Python (FastAPI) and JavaScript (frontend). It improves maintainability, correctness, and onboarding speed.
+
+## Rule: Use explicit types and meaningful names
+1. **Always use** explicit type hints in Python public functions, APIs, and models.
+2. **Never use** vague/short names (e.g., `n`, `x`) for meaningful variables or functions.
+3. **Always use** `camelCase` for variables/functions and `PascalCase` for classes/types.
+4. **Never use** `var` in JS; **always use** `const` by default, `let` when reassignment is required.
+5. **Always** extract complex conditions into named booleans or helper functions.
+6. **Never** rely on implicit `any` semantics; use JSDoc types for JS when beneficial.
+7. **Always** keep functions small with clear responsibilities; prefer early returns.
+
+## Common Violations and Solutions
+
+### ❌ BAD: Missing typing and unclear names (Python)
+```python
+def handle(data):
+    r = do(d=data)
+    return r
+```
+
+### ✅ GOOD: Explicit typing and clear names (Python)
+```python
+from typing import Any, Dict
+
+def handleNewsRequest(payload: Dict[str, Any]) -> dict:
+    result: dict = processNewsPayload(requestPayload=payload)
+    return result
+```
+
+### ❌ BAD: Using `var` and cryptic names (JS)
+```javascript
+var a = fetch('/api/get_news');
+function cb(r){ console.log(r); }
+```
+
+### ✅ GOOD: `const`/`let` and descriptive names (JS)
+```javascript
+/** @returns {Promise<Response>} */
+const fetchLatestNews = () => fetch('/api/get_news');
+
+const logServerResponse = (response) => {
+  console.log(response);
+};
+```
+
+## When You Think You Need Exceptions
+### Quick scripts or internal helpers without external callers
+```python
+# ✅ GOOD: Keep minimal but still readable
+def isTopicSelected(topic: str, selected: list[str]) -> bool:
+    return topic in selected
+```
+
+## Specific Project Patterns
+```python
+# ✅ GOOD: Pydantic models with explicit fields
+from pydantic import BaseModel
+
+class NewsItem(BaseModel):
+    title: str
+    snippet: str
+    url: str
+    topic: str
+```
+
+```javascript
+// ✅ GOOD: JSDoc types in JS
+/** @typedef {{ title: string, snippet: string, url: string, topic: string }} NewsItem */
+```
+
+## Alternative Solutions
+### 1. Use `TypedDict` for lightweight typing
+```python
+from typing import TypedDict
+
+class NewsItemDict(TypedDict):
+    title: str
+    snippet: str
+    url: str
+    topic: str
+```
+
+### 2. Encapsulate complex logic into small utilities
+```javascript
+/** @param {string[]} topics */
+const buildTopicQuery = (topics) => topics.join(', ');
+```
+
+## Tool Configuration (Optional)
+```json
+{
+  "editor": {
+    "tabSize": 2,
+    "insertSpaces": true
+  }
+}
+```
+
+## Checklist for the Assistant
+- [ ] Always add Python type hints on public functions and models
+- [ ] Prefer `const`/`let` with JSDoc typedefs for JS data shapes
+- [ ] Use descriptive names and avoid cryptic abbreviations
+- [ ] Keep functions small; use early returns and guard clauses
+- [ ] Extract complex logic into helpers with clear names
+
+
