@@ -1,6 +1,6 @@
-"""FastAPI application exposing a root Hello World and a health check endpoint.
+"""FastAPI application serving the frontend and exposing API endpoints.
 
-This minimal server validates the stack and provides a base for future routes.
+This server provides the What's New dashboard frontend and REST API for news search.
 """
 
 import logging
@@ -8,7 +8,8 @@ from typing import Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from server.config import loadConfig
 from server.startup import validatePerplexityApiKey
@@ -55,15 +56,13 @@ def onStartup() -> None:
         raise
 
 
-@app.get("/", response_class=PlainTextResponse)
-def read_root() -> str:
-    """Return a plain text greeting to confirm the server is running."""
-    return "Hello World"
-
-
 @app.get("/api/health")
 def get_health() -> Dict[str, str]:
     """Return a simple health status payload."""
     return {"status": "ok"}
+
+
+# Mount static files for CSS and JS
+app.mount("/", StaticFiles(directory="public", html=True), name="static")
 
 

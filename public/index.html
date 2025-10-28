@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's New - Local News Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>What's New</h1>
+        <p class="subtitle">Your local news dashboard powered by AI</p>
+    </header>
+
+    <main>
+        <!-- Options Section -->
+        <section id="options-section" aria-label="Search options">
+            <div class="options-container">
+                <h2>Options</h2>
+                <div id="options-controls">
+                    <!-- Future: time range, max results, etc. -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Section -->
+        <section id="topics-section" aria-label="Topic selection">
+            <div class="topics-container">
+                <h2>Select Topics</h2>
+                <div id="topics-list">
+                    <!-- Checkboxes will be rendered here -->
+                </div>
+                <button id="refresh-button" class="primary-button">
+                    Refresh News
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" aria-label="News results">
+            <div class="results-container">
+                <h2>Latest News</h2>
+                <div id="loading-indicator" class="hidden">
+                    <span class="spinner"></span>
+                    <p>Loading news...</p>
+                </div>
+                <div id="error-message" class="hidden error-box">
+                    <!-- Error messages will be displayed here -->
+                </div>
+                <div id="news-list">
+                    <!-- News items will be rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Root -->
+    <div id="modal-root" class="hidden" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button id="modal-close" class="modal-close-button" aria-label="Close modal">&times;</button>
+            <div id="modal-body">
+                <!-- Modal content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

@@ -68,28 +68,49 @@ uvicorn server.main:app --reload
 
 The server listens on `http://127.0.0.1:8000` by default.
 
+## Access the Application
+
+Once the server is running, open your browser and navigate to:
+
+```
+http://127.0.0.1:8000
+```
+
+This will load the frontend dashboard. The page includes:
+- Topic selection area (coming soon)
+- News results display (coming soon)
+- Modern, responsive UI
+
 ## Features
 
 ### Current Features
 
 - FastAPI backend with health check endpoint
 - Configuration management for Perplexity API key
-- Service layer ready for news search integration
+- News search service integrated with Perplexity AI
+- Frontend skeleton with modern UI
+- Static file serving
 
 ### Planned Features
 
-- News search by topic using Perplexity AI
-- Frontend dashboard with topic selection
+- Dynamic topic selection with checkboxes
+- Real-time news fetching via "Refresh News" button
 - Modal view for article details
 - Error handling and empty states
+- Loading indicators
 
 ## Quick Test
 
 Test the running server:
 
 ```bash
-curl http://127.0.0.1:8000/
+# Test health endpoint
 curl http://127.0.0.1:8000/api/health
+
+# Test news API with topics
+curl -X POST http://127.0.0.1:8000/api/get_news \
+  -H "Content-Type: application/json" \
+  -d '{"topics": ["technology", "Python"]}'
 ```
 
 ## Documentation

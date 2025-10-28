@@ -101,7 +101,7 @@ results = client.search_latest(topic="technology", max_results=5)
 
 ### Current Endpoints
 
-- `GET /` — Returns plain text `Hello World` (`text/plain`)
+- `GET /` — Serves frontend application (`index.html`)
 - `GET /api/health` — Returns JSON `{ "status": "ok" }`
 - `POST /api/get_news` — Accepts `TopicRequest`, returns news items grouped by topic
 
@@ -144,6 +144,48 @@ Fetches recent news articles for the specified topics using the Perplexity servi
 
 - `POST /api/set_key` — Stores and validates Perplexity API key (server-side only)
 
+## Frontend Architecture
+
+### Structure
+
+The frontend is built with vanilla JavaScript (ES6) and follows a simple structure:
+
+- **index.html**: Main application page with semantic HTML5 structure
+- **styles.css**: Modern, responsive CSS with CSS variables for theming
+- **app.js**: Client-side application logic
+
+### Frontend Features
+
+**Current**:
+- Semantic HTML5 structure with ARIA landmarks
+- Responsive grid layout (desktop-first, mobile-responsive)
+- Modal component for detail views
+- Loading and error state UI
+- Modern CSS with custom properties for theming
+
+**Planned**:
+- Dynamic topic rendering from predefined list
+- News fetching via `/api/get_news` endpoint
+- Article detail modal with full content
+- Error handling and empty states
+- Topic selection persistence (local storage)
+
+### UI Components
+
+- **Options Section**: Reserved for future controls (time range, max results)
+- **Topics Section**: Checkboxes for topic selection + refresh button
+- **Results Section**: News items list with loading/error states
+- **Modal**: Overlay for article details
+
+### Static File Serving
+
+FastAPI serves static files from the `public/` directory:
+- Mount point: `/` with `html=True` for automatic `index.html` serving
+- All static assets (HTML, CSS, JS) are served directly
+- API routes take precedence over static file serving
+
+**Location**: `server/main.py`
+
 ## Security Considerations
 
 - **API Key Storage**: Perplexity API key is stored server-side only and never exposed to the client
@@ -181,10 +223,10 @@ WhatsNew/
 ├── config/
 │   ├── local_settings.json  # Local config (gitignored)
 │   └── local_settings.json.example  # Example template
-├── public/                  # Frontend assets (planned)
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
+├── public/                  # Frontend assets
+│   ├── index.html           # Main application page
+│   ├── styles.css           # Application styles
+│   └── app.js               # Frontend logic
 ├── requirements.txt         # Python dependencies
 └── README.md               # User-facing documentation
 ```
