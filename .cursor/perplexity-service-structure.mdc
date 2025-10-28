@@ -1,7 +1,6 @@
 ---
-description: Structure and practices for the Perplexity service wrapper and related files
 globs: "server/**/*.py,**/*.py"
-alwaysApply: true
+alwaysApply: false
 ---
 # Perplexity Service and Project Structure
 
@@ -63,5 +62,6 @@ Use a dedicated `/api/health` that does not contact Perplexity, only local check
 - [ ] Separate request build, call, and parse steps
 - [ ] Map upstream errors to internal exceptions
 - [ ] Enforce limits and field filtering
+
 
 

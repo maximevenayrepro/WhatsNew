@@ -1,7 +1,6 @@
 ---
-description: Enforce concise, useful comments and docstrings only for non-trivial logic
 globs: "server/**/*.py,**/*.py,public/**/*.js,public/**/*.html"
-alwaysApply: true
+alwaysApply: false
 ---
 # Comments and Docstrings
 
@@ -87,5 +86,6 @@ def parsePerplexitySearchResponse(...):
 - [ ] Comment only non-trivial logic, constraints, and invariants
 - [ ] Remove/avoid TODO comments; create tasks instead
 - [ ] Keep comments concise and in English
+
 
 

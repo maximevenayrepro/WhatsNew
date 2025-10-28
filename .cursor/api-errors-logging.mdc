@@ -1,7 +1,6 @@
 ---
-description: Standardize API contracts, error handling, and safe logging for FastAPI
 globs: "server/**/*.py,**/*.py"
-alwaysApply: true
+alwaysApply: false
 ---
 # API Design, Errors, and Logging
 
@@ -76,5 +75,6 @@ except ExternalServiceTimeoutError:
 - [ ] Use correct status codes and a stable error shape
 - [ ] Sanitize logs; never leak secrets to client or logs
 - [ ] Handle external API failures with mapped exceptions
+
 
 

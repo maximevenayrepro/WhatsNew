@@ -1,7 +1,6 @@
 ---
-description: Enforce clear naming, explicit typing, and consistent style for Python and JS
 globs: "server/**/*.py,**/*.py,public/**/*.js"
-alwaysApply: true
+alwaysApply: false
 ---
 # Naming, Typing, and Style
 
@@ -110,5 +109,6 @@ const buildTopicQuery = (topics) => topics.join(', ');
 - [ ] Use descriptive names and avoid cryptic abbreviations
 - [ ] Keep functions small; use early returns and guard clauses
 - [ ] Extract complex logic into helpers with clear names
+
 
 

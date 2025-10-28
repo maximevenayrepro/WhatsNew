@@ -1,7 +1,6 @@
 ---
-description: Maintain concise README and run instructions for local setup and usage
 globs: "README.md,ai_docs/**/*.md"
-alwaysApply: true
+alwaysApply: false
 ---
 # README and Runbook
 
@@ -52,5 +51,6 @@ Short `Makefile` or PowerShell script for common tasks (optional).
 - [ ] Keep endpoints documented and up to date
 - [ ] Use placeholders for secrets
 - [ ] Update when configs or ports change
+
 
 

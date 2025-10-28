@@ -1,7 +1,6 @@
 ---
-description: Frontend rules for UI, accessibility, state, and DOM manipulation
 globs: "public/**/*.js,public/**/*.html,public/**/*.css"
-alwaysApply: true
+alwaysApply: false
 ---
 # Frontend UI and Accessibility
 
@@ -70,5 +69,6 @@ function renderNewsSection(topic, items) { /* ... */ }
 - [ ] Manage and persist `selectedTopics` in `localStorage`
 - [ ] Batch DOM updates to avoid jank
 - [ ] Provide clear empty/error states
+
 
 

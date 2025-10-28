@@ -1,7 +1,6 @@
 ---
-description: Enforce timeouts, retries, and parallelism limits for responsive UX
 globs: "server/**/*.py,**/*.py,public/**/*.js"
-alwaysApply: true
+alwaysApply: false
 ---
 # Performance and Network
 
@@ -72,5 +71,6 @@ try { /* fetch */ } finally { setLoading(false); }
 - [ ] Limit concurrency for topic fetching
 - [ ] Keep UI responsive with loading states
 - [ ] Validate inputs and cap results per topic
+
 
 
