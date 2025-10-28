@@ -37,6 +37,7 @@ We need a minimal server to validate the stack and provide a base for future rou
 - [ ] `GET /` returns plain text "Hello World"
 - [ ] `GET /api/health` returns `{ status: "ok" }`
 - [ ] App runs with `uvicorn server.main:app --reload`
+ - [ ] README updated with run instructions and endpoint list
 
 ---
 
@@ -51,7 +52,7 @@ We need a minimal server to validate the stack and provide a base for future rou
 
 ### Functional Requirements
 - Implement `server/main.py` with two endpoints
-- Add run command documentation
+- Update README with run command and endpoint documentation
 
 ### Non-Functional Requirements
 - Clean, typed function signatures where applicable
@@ -82,11 +83,13 @@ None in this task.
 - Define `app = FastAPI()`
 - Implement `GET /` and `GET /api/health`
 - Run locally with Uvicorn and verify
+ - Update README with "Run the server" and "Endpoints" sections
 
 ---
 
 ## 10. Task Completion Tracking
 - Health endpoint reachable and returns expected payload
+- README includes run command and endpoint list
 
 ---
 

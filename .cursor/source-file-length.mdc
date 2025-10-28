@@ -1,0 +1,171 @@
+---
+globs: "*.py,*.js,*.ts,*.tsx"
+alwaysApply: false
+---
+# Keep Source Files Small and Focused
+
+## Overview
+Smaller, focused source files are easier to read, review, test, and maintain. They reduce merge conflicts and make responsibilities clear. When a file grows too large, it is a signal that multiple concerns are mixed and should be split.
+
+## Rule: Keep modules short and single-responsibility
+1. Keep most source files under ~250–300 lines. Hard cap at 400 lines per module (excluding license headers and import blocks).
+2. Separate concerns by feature and layer:
+   - Routes/controllers vs. services vs. models/schemas vs. utilities
+3. One main public concept per file (module, class, or component).
+4. Prefer composition and extraction over adding more code to an already large file.
+5. Fix the root cause: when a file nears limits, extract submodules instead of adding conditional complexity.
+
+## Common Violations and Solutions
+
+### ❌ BAD: Monolithic entrypoint mixing routing, services, and models
+```python
+# server/main.py (too long, mixed responsibilities)
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Routers inline
+@app.get("/health")
+
+def health():
+    return {"ok": True}
+
+# Service logic inline
+
+def fetch_news(query: str) -> list[dict]:
+    # ... complex external calls, parsing, error handling ...
+    return []
+
+# Model types inline
+
+class NewsItem:
+    def __init__(self, title: str, url: str) -> None:
+        self.title = title
+        self.url = url
+
+@app.get("/news")
+
+def news():
+    items = fetch_news("local")
+    return items
+```
+
+### ✅ GOOD: Split by responsibility and feature
+```python
+# server/main.py (thin app composition)
+from fastapi import FastAPI
+from server.routes import health, news
+
+app = FastAPI()
+app.include_router(health.router)
+app.include_router(news.router)
+```
+
+```python
+# server/routes/news.py (routing only)
+from fastapi import APIRouter
+from server.services.news_service import get_news
+
+router = APIRouter(prefix="/news", tags=["news"])
+
+@router.get("")
+
+def list_news():
+    return get_news("local")
+```
+
+```python
+# server/services/news_service.py (business logic only)
+from server.models.types import NewsItem
+
+def get_news(topic: str) -> list[NewsItem]:
+    # ... external API calls, parsing, mapping to models ...
+    return []
+```
+
+```python
+# server/models/types.py (types/models only)
+from dataclasses import dataclass
+
+@dataclass
+class NewsItem:
+    title: str
+    url: str
+```
+
+### ❌ BAD: Utility dumping ground file growing indefinitely
+```python
+# server/utils.py  # collects unrelated helpers for routing, IO, parsing, etc.
+# ... hundreds of mixed helpers accumulating over time ...
+```
+
+### ✅ GOOD: Purposeful, small modules
+```python
+# server/utils/json_io.py
+# server/utils/date_parsing.py
+# server/utils/http_client.py
+# Each module does one thing well and remains short.
+```
+
+## When You Think You Need a Big File
+
+### Temptation: "It is faster to just add more here"
+```python
+# ❌ BAD: keep extending server/main.py to add features
+```
+
+```python
+# ✅ GOOD: extract a new module or router and import it from main
+```
+
+### Temptation: "All helpers in a single utils.py"
+```python
+# ❌ BAD: a catch-all utils.py with unrelated helpers
+```
+
+```python
+# ✅ GOOD: create a small, named module per concern inside server/utils/
+```
+
+## Specific Project Patterns
+- FastAPI application entry should be thin:
+  - `server/main.py` only creates `FastAPI` app and includes routers.
+- Place routes in `server/routes/`, services in `server/services/`, models/schemas in `server/models/`.
+- For frontend (if added), split UI components by feature; avoid page files > 300 lines.
+
+## Alternative Solutions
+
+### 1. Use packages to group extracted modules
+Create a directory package with `__init__.py` to host related submodules (e.g., `server/services/perplexity/`).
+
+### 2. Create internal helper modules instead of long classes
+Extract private helpers into sibling modules (e.g., `_mapping.py`) rather than bloating a single class/module.
+
+## Tool Configuration (Optional)
+
+### Python (pylint)
+Add to `.pylintrc`:
+```ini
+[design]
+max-module-lines=400
+```
+
+### JavaScript/TypeScript (ESLint)
+Add to ESLint config:
+```json
+{
+  "rules": {
+    "max-lines": ["error", { "max": 400, "skipComments": true, "skipBlankLines": true }]
+  }
+}
+```
+
+## Checklist for the Assistant
+- [ ] Never suggest adding new routes/services/models directly into `server/main.py` when it grows.
+- [ ] Never propose dumping unrelated helpers into a single `utils.py` file.
+- [ ] Always propose extracting routers, services, and models into separate small modules.
+- [ ] Prefer composition and package-level organization over very long files.
+- [ ] When a file nears limits, recommend a concrete split plan (modules and imports).
+- [ ] Keep edits aligned with the project structure in `server/routes`, `server/services`, `server/models`.
+
+Remember: Small, focused files improve clarity, testability, and change velocity.

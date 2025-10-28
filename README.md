@@ -45,4 +45,25 @@ To deactivate later, run:
 deactivate
 ```
 
-> Note: Keep this README minimal for now. Endpoints, run commands, and environment variables will be documented in later tasks.
+
+## Run the Server
+
+After installing requirements and activating the virtual environment, start the FastAPI app with Uvicorn:
+
+```powershell
+uvicorn server.main:app --reload
+```
+
+The server listens on `http://127.0.0.1:8000` by default.
+
+## Endpoints
+
+- `GET /` — returns plain text `Hello World` (`text/plain`)
+- `GET /api/health` — returns JSON `{ "status": "ok" }`
+
+### Quick Test
+
+```bash
+curl http://127.0.0.1:8000/
+curl http://127.0.0.1:8000/api/health
+```
