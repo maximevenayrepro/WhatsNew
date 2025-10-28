@@ -3,11 +3,22 @@
 This minimal server validates the stack and provides a base for future routes.
 """
 
+import logging
 from typing import Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+
+from server.config import loadConfig
+from server.startup import validatePerplexityApiKey
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 app: FastAPI = FastAPI()
@@ -25,6 +36,19 @@ app.add_middleware(
     allow_headers=["Content-Type"],
     allow_credentials=False,
 )
+
+
+@app.on_event("startup")
+def onStartup() -> None:
+    """Load configuration and validate Perplexity API key on application startup."""
+    logger.info("Starting WhatsNew application...")
+    try:
+        loadConfig()
+        validatePerplexityApiKey()
+        logger.info("Application startup complete")
+    except Exception as error:
+        logger.error("Startup failed: %s", error)
+        raise
 
 
 @app.get("/", response_class=PlainTextResponse)

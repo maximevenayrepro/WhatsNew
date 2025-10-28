@@ -45,6 +45,19 @@ To deactivate later, run:
 deactivate
 ```
 
+## Configuration
+
+Before running the server, create a local configuration file with your Perplexity API key:
+
+1. Copy the example configuration file:
+```bash
+cp config/local_settings.json.example config/local_settings.json
+```
+
+2. Edit `config/local_settings.json` and replace `pplx-YOUR-API-KEY-HERE` with your actual Perplexity API key.
+
+**Important:** The `config/local_settings.json` file is gitignored and should never be committed to version control.
+
 
 ## Run the Server
 

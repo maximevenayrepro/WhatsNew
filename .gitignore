@@ -54,6 +54,7 @@ logs/
 .env.*
 .envrc
 config.json
+config/local_settings.json
 
 # Node (future-proofing for frontend tooling)
 node_modules/

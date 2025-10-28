@@ -1,0 +1,37 @@
+---
+globs: "**/*.*"
+alwaysApply: true
+---
+# Post-Task Compliance Review
+
+## Overview
+This rule requires a short pass over all `.cursor` rules after each task execution or file change to ensure the work is compliant and complete before proceeding.
+
+## Rule: Re-check `.cursor` rules after every change
+1. **Always** review applicable `.cursor` guidelines immediately after completing a task, commit, or file edit.
+2. **Fix** any non-compliance before moving on (naming, typing, comments, docs, performance, security, etc.).
+3. **Update** documentation, tests, and examples when behavior, endpoints, or configurations change.
+
+## Scope
+- Code, comments, and docstrings
+- Documentation and README/run instructions
+- Configuration, secrets handling, and CORS
+- API contracts, error shapes, and logging
+- Frontend UI text and accessibility
+- Performance and network behavior
+- File sizes and structure conventions
+
+## Quick Checklist for the Assistant
+- [ ] English-only content respected
+- [ ] Naming and typing conventions followed
+- [ ] Comments and docstrings clear and necessary
+- [ ] Source file length/structure within guidance
+- [ ] API errors and logging consistent and actionable
+- [ ] Secrets/config and CORS safe and correct
+- [ ] Performance/network sane defaults and no obvious regressions
+- [ ] Frontend UI accessibility and visible text compliant
+- [ ] README/runbook updated if needed
+
+## When You Think You Need Exceptions
+Document the exception inline and in the commit message. Prefer adjusting the implementation to meet the rules rather than bypassing them. Revisit and remove exceptions when no longer needed.
+
