@@ -208,6 +208,65 @@ section h2 {
     margin-bottom: 1rem;
 }
 
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Topic Sections */
+.topic-section {
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--surface);
+}
+
+.topic-header {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.topic-empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 0.5rem 0;
+}
+
+/* News Items List */
+.news-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.news-item-simple {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.news-item-simple:last-child {
+    border-bottom: none;
+}
+
+.news-item-simple a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+}
+
+.news-item-simple a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 /* Utility Classes */
 .hidden {
     display: none !important;

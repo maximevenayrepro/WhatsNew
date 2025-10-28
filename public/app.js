@@ -2,8 +2,11 @@
 // State Management
 // =============================================================================
 
+// Hardcoded topics for initial implementation
+const AVAILABLE_TOPICS = ['Tech', 'Crypto', 'Space'];
+
 const state = {
-    topics: [],
+    topics: AVAILABLE_TOPICS,
     selectedTopics: [],
     newsItems: [],
     isLoading: false,
@@ -43,8 +46,10 @@ function init() {
     // Attach event listeners
     attachEventListeners();
 
-    // TODO: Initialize topics (next task)
-    console.log('App initialized - ready for dynamic behavior');
+    // Render topics
+    renderTopics();
+
+    console.log('App initialized - topics rendered');
 }
 
 function attachEventListeners() {
@@ -75,9 +80,60 @@ function attachEventListeners() {
 // Event Handlers
 // =============================================================================
 
-function handleRefreshClick() {
-    console.log('Refresh clicked');
-    // TODO: Implement fetch news (task 1100)
+async function handleRefreshClick() {
+    // Validate that at least one topic is selected
+    if (state.selectedTopics.length === 0) {
+        showError('Please select at least one topic');
+        return;
+    }
+
+    // Clear previous error messages
+    showError(null);
+
+    // Update loading state
+    state.isLoading = true;
+    showLoading(true);
+    
+    // Disable refresh button during loading
+    if (DOM.refreshButton) {
+        DOM.refreshButton.disabled = true;
+    }
+
+    try {
+        const results = await fetchNews(state.selectedTopics);
+        state.newsItems = results;
+        renderNews();
+        console.log('Successfully fetched and rendered news for:', state.selectedTopics);
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        showError(error.message || 'Failed to fetch news. Please try again.');
+    } finally {
+        // Reset loading state
+        state.isLoading = false;
+        showLoading(false);
+        
+        // Re-enable refresh button
+        if (DOM.refreshButton) {
+            DOM.refreshButton.disabled = false;
+        }
+    }
+}
+
+function handleTopicChange(e) {
+    const topicName = e.target.value;
+    const isChecked = e.target.checked;
+
+    if (isChecked) {
+        // Add topic to selectedTopics if not already present
+        if (!state.selectedTopics.includes(topicName)) {
+            state.selectedTopics.push(topicName);
+        }
+    } else {
+        // Remove topic from selectedTopics
+        state.selectedTopics = state.selectedTopics.filter(t => t !== topicName);
+    }
+
+    console.log('Topics selection updated:', state.selectedTopics);
 }
 
 function handleKeyDown(e) {
@@ -92,13 +148,98 @@ function handleKeyDown(e) {
 // =============================================================================
 
 function renderTopics() {
-    // TODO: Implement in task 1000
-    console.log('renderTopics - not yet implemented');
+    if (!DOM.topicsList) {
+        console.error('Topics list container not found');
+        return;
+    }
+
+    // Clear existing content
+    DOM.topicsList.innerHTML = '';
+
+    // Create a checkbox for each topic
+    state.topics.forEach(topic => {
+        const checkboxContainer = document.createElement('div');
+        checkboxContainer.className = 'topic-checkbox';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `topic-${topic.toLowerCase()}`;
+        checkbox.name = 'topic';
+        checkbox.value = topic;
+        checkbox.addEventListener('change', handleTopicChange);
+
+        const label = document.createElement('label');
+        label.htmlFor = `topic-${topic.toLowerCase()}`;
+        label.textContent = topic;
+
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        DOM.topicsList.appendChild(checkboxContainer);
+    });
+
+    console.log(`Rendered ${state.topics.length} topics`);
 }
 
 function renderNews() {
-    // TODO: Implement in task 1100
-    console.log('renderNews - not yet implemented');
+    if (!DOM.newsList) {
+        console.error('News list container not found');
+        return;
+    }
+
+    // Clear existing content
+    DOM.newsList.innerHTML = '';
+
+    // Check if we have results
+    if (!state.newsItems || state.newsItems.length === 0) {
+        DOM.newsList.innerHTML = '<p class="empty-state">No news found. Try selecting different topics.</p>';
+        return;
+    }
+
+    // Render each topic section
+    state.newsItems.forEach(topicData => {
+        // Create topic section
+        const topicSection = document.createElement('div');
+        topicSection.className = 'topic-section';
+
+        // Topic header
+        const topicHeader = document.createElement('h3');
+        topicHeader.className = 'topic-header';
+        topicHeader.textContent = topicData.topic;
+        topicSection.appendChild(topicHeader);
+
+        // Check if topic has items
+        if (!topicData.items || topicData.items.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.className = 'topic-empty';
+            emptyMsg.textContent = 'No news found for this topic';
+            topicSection.appendChild(emptyMsg);
+        } else {
+            // Create list of news items
+            const newsList = document.createElement('ul');
+            newsList.className = 'news-items-list';
+
+            topicData.items.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.className = 'news-item-simple';
+
+                const link = document.createElement('a');
+                link.href = item.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = item.title;
+                link.title = item.snippet; // Show snippet on hover
+
+                listItem.appendChild(link);
+                newsList.appendChild(listItem);
+            });
+
+            topicSection.appendChild(newsList);
+        }
+
+        DOM.newsList.appendChild(topicSection);
+    });
+
+    console.log(`Rendered ${state.newsItems.length} topic sections`);
 }
 
 function showLoading(show) {
@@ -145,8 +286,47 @@ function closeModal() {
 // =============================================================================
 
 async function fetchNews(topics) {
-    // TODO: Implement in task 1100
-    console.log('fetchNews - not yet implemented', topics);
+    const API_ENDPOINT = 'http://127.0.0.1:8000/api/get_news';
+    const TIMEOUT_MS = 65000; // 65 seconds (backend has 60s timeout)
+
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    try {
+        const response = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ topics }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            // Handle HTTP errors
+            const errorText = await response.text();
+            throw new Error(`Server error (${response.status}): ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        clearTimeout(timeoutId);
+
+        if (error.name === 'AbortError') {
+            throw new Error('Request timeout - please try again');
+        }
+        
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Network error - cannot reach server');
+        }
+
+        throw error;
+    }
 }
 
 // =============================================================================
