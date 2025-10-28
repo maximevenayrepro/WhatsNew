@@ -81,6 +81,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Manual test: select topics, click Refresh, see results/empty-state
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

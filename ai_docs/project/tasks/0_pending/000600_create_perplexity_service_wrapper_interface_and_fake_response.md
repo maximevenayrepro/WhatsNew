@@ -81,6 +81,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Service can be imported and called from a REPL
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

@@ -79,6 +79,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Manual test: open/close modal, link opens in new tab
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

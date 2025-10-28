@@ -79,6 +79,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Simulate failures and verify UI messages
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

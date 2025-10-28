@@ -82,6 +82,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Page opens locally, loads CSS/JS without errors
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

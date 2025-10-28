@@ -80,6 +80,7 @@ None in this task.
 
 ## 10. Task Completion Tracking
 - Schemas import cleanly in IDE and during app startup
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

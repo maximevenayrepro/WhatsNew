@@ -83,6 +83,7 @@ None in this task.
 
 ## 10. Task Completion Tracking
 - cURL or HTTPie test returns expected JSON structure
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

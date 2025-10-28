@@ -85,6 +85,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Logs show success/failure without exposing secrets
+- README updated to reflect this task (summary and usage impact)
 
 ---
 

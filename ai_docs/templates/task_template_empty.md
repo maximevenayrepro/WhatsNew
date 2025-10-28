@@ -153,6 +153,8 @@ TODO: Break your work into phases with specific tasks and file paths
 
 TODO: Define how you want the AI to track and report progress on tasks
 
+- Update `README.md` upon task completion to reflect changes (features, setup, usage)
+
 ---
 
 ## 11. File Structure & Organization

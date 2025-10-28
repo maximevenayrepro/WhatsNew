@@ -80,6 +80,7 @@ None.
 
 ## 10. Task Completion Tracking
 - Checkboxes appear; Refresh button visible
+- README updated to reflect this task (summary and usage impact)
 
 ---
 
