@@ -60,30 +60,42 @@ Validation rules:
 
 ### Perplexity Client
 
-The `PerplexityClient` service provides a stable interface for searching recent news articles.
+The `PerplexityClient` service provides a stable interface for searching recent news articles via the Perplexity API.
 
 **Location**: `server/services/perplexity_client.py`
 
-**Current implementation**: Returns fake deterministic data to enable frontend development without requiring Perplexity API credentials. The fake data includes sample articles for topics like "technology", "politics", and "sports".
+**Implementation**: Integrates with the Perplexity API to fetch real-time news data from the last 24 hours, limited to 5 results per topic.
 
-**Planned implementation**: Will integrate with Perplexity API to fetch real-time news data from the last 24 hours, limited to 5 results per topic.
+#### Features
+
+- **Real-time news search**: Queries Perplexity API for recent articles (last 24 hours)
+- **Structured parsing**: Extracts title, snippet, and URL from API responses
+- **Error handling**: Graceful fallback on API errors with logging
+- **Timeout protection**: 30-second timeout for API requests
+- **Model**: Uses Perplexity's `sonar` model for online search
 
 #### Usage Example
 
 ```python
+from server.config import getConfig
 from server.services.perplexity_client import PerplexityClient
 
-client = PerplexityClient()
+config = getConfig()
+client = PerplexityClient(api_key=config.perplexityApiKey)
 results = client.search_latest(topic="technology", max_results=5)
-# Returns a list of NewsItem objects
+# Returns a list of NewsItem objects with real data
 ```
 
 #### Methods
 
-- `search_latest(topic: str, max_results: int = 5) -> list[NewsItem]`
+- `__init__(api_key: str) -> None`
+  - Initializes the client with a Perplexity API key
+  
+- `search_latest(topic: str, max_results: int) -> list[NewsItem]`
   - Searches for recent news articles about the given topic
-  - Returns up to `max_results` items
-  - Currently returns fake data; future version will call Perplexity API
+  - Returns up to `max_results` items (capped at 5)
+  - Returns empty list on error
+  - Query format: "Latest news about {topic} in the past 24 hours"
 
 ## API Endpoints
 
