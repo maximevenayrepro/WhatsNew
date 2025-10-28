@@ -1,0 +1,232 @@
+---
+description: Standard procedure for testing the application locally with proper setup and cleanup (PowerShell on Windows)
+globs: *.py,*.ps1
+alwaysApply: true
+---
+# Local Testing Procedure
+
+## Overview
+This rule defines the mandatory sequence for testing the WhatsNew application locally using PowerShell on Windows. Following this procedure ensures a clean environment, proper dependency isolation, and reliable testing results.
+
+Skipping steps or testing in the wrong order leads to port conflicts, dependency mismatches, and unreliable test results.
+
+## Rule: Always follow the complete testing sequence
+1. **Always kill** existing Python processes using the target port before starting
+2. **Always setup** the virtual environment (venv) before running the server
+3. **Always verify** the server is running by testing the health endpoint
+4. **Never skip** any step in the sequence - each depends on the previous one
+
+## Common Violations and Solutions
+
+### ❌ BAD: Starting server without checking for port conflicts
+```powershell
+# Starting server without checking if port 8000 is already in use
+venv\Scripts\Activate.ps1; uvicorn server.main:app --reload
+# This will fail with "Address already in use" error
+```
+
+### ✅ GOOD: Kill existing process first (PowerShell)
+```powershell
+# Check for processes using port 8000
+netstat -ano | Select-String :8000
+
+# Find and kill the process (replace <PID> with actual PID)
+Stop-Process -Id <PID> -Force
+
+# Or automatically kill all processes on port 8000
+$proc = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
+if ($proc) { Stop-Process -Id $proc.OwningProcess -Force }
+```
+
+### ❌ BAD: Running without virtual environment
+```powershell
+# Running directly with system Python without activating venv
+uvicorn server.main:app --reload
+# This will fail - uvicorn not found or wrong dependencies
+```
+
+### ✅ GOOD: Setup and activate venv first (PowerShell)
+```powershell
+# Create venv if it doesn't exist
+if (-not (Test-Path venv)) { python -m venv venv }
+
+# Activate venv
+venv\Scripts\Activate.ps1
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### ❌ BAD: Assuming server is ready without verification
+```powershell
+# Starting server and immediately running tests without waiting
+Start-Job { uvicorn server.main:app --reload }
+pytest tests/
+# Tests may fail because server isn't ready yet
+```
+
+### ✅ GOOD: Verify health endpoint before testing
+```powershell
+# Start server (in background or separate terminal)
+venv\Scripts\Activate.ps1; uvicorn server.main:app --reload
+
+# In another terminal, wait a moment then verify it's ready
+Start-Sleep -Seconds 2
+curl.exe http://127.0.0.1:8000/api/health
+# Should return: {"status": "ok"}
+
+# Now safe to proceed with testing
+```
+
+## Complete Testing Sequence (PowerShell)
+
+### Step 1: Clean up existing processes
+```powershell
+# Check for processes using port 8000
+netstat -ano | Select-String :8000
+
+# Automatically kill any process on port 8000
+$proc = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
+if ($proc) { 
+    Stop-Process -Id $proc.OwningProcess -Force
+    Write-Host "Killed process on port 8000"
+}
+```
+
+### Step 2: Setup virtual environment
+```powershell
+# Create venv if it doesn't exist
+if (-not (Test-Path venv)) { 
+    python -m venv venv 
+}
+
+# Activate venv
+venv\Scripts\Activate.ps1
+
+# Install/update dependencies
+pip install -r requirements.txt
+```
+
+### Step 3: Start the server
+```powershell
+# Activate venv and start server with hot reload
+venv\Scripts\Activate.ps1; uvicorn server.main:app --reload
+# Server should start on http://127.0.0.1:8000
+```
+
+### Step 4: Verify server health
+```powershell
+# In a separate PowerShell terminal
+# Wait for server to be ready
+Start-Sleep -Seconds 2
+
+# Test health endpoint
+Invoke-WebRequest http://127.0.0.1:8000/api/health | Select-Object StatusCode, Content
+
+# Or with curl if available
+curl.exe http://127.0.0.1:8000/api/health
+
+# Expected response:
+# {"status": "ok", "timestamp": "...", "version": "..."}
+```
+
+## Specific Project Patterns
+
+### Testing after code changes
+```powershell
+# ❌ BAD - Restart without cleanup
+# Just Ctrl+C and restart server
+# Old process might still hold resources
+
+# ✅ GOOD - Full cleanup and restart
+# 1. Stop server (Ctrl+C)
+# 2. Kill any remaining processes on port 8000
+$proc = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
+if ($proc) { Stop-Process -Id $proc.OwningProcess -Force }
+
+# 3. Restart server (activate venv first)
+venv\Scripts\Activate.ps1; uvicorn server.main:app --reload
+
+# 4. Verify health endpoint
+Start-Sleep -Seconds 2
+curl.exe http://127.0.0.1:8000/api/health
+```
+
+### Setting up for the first time
+```powershell
+# ✅ GOOD - Complete first-time setup
+# 1. Clone repository
+git clone <repo-url>
+cd WhatsNew
+
+# 2. Create virtual environment
+python -m venv venv
+
+# 3. Activate venv
+venv\Scripts\Activate.ps1
+
+# 4. Install dependencies
+pip install -r requirements.txt
+
+# 5. Setup environment variables
+# Create .env file with required secrets
+
+# 6. Start server (from project root, venv must be activated)
+venv\Scripts\Activate.ps1; uvicorn server.main:app --reload
+
+# 7. Verify health (in another terminal)
+Start-Sleep -Seconds 2
+curl.exe http://127.0.0.1:8000/api/health
+```
+
+## Alternative Solutions
+
+### 1. Using a PowerShell startup script
+Create a script to automate the sequence:
+
+**start-server.ps1**
+```powershell
+#!/usr/bin/env pwsh
+Write-Host "Cleaning up existing processes..." -ForegroundColor Yellow
+$proc = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
+if ($proc) { 
+    Stop-Process -Id $proc.OwningProcess -Force
+    Write-Host "Killed process on port 8000" -ForegroundColor Green
+}
+
+Write-Host "Setting up virtual environment..." -ForegroundColor Yellow
+if (-not (Test-Path venv)) {
+    python -m venv venv
+}
+
+Write-Host "Activating virtual environment..." -ForegroundColor Yellow
+& venv\Scripts\Activate.ps1
+
+Write-Host "Installing dependencies..." -ForegroundColor Yellow
+pip install -r requirements.txt
+
+Write-Host "Starting server..." -ForegroundColor Green
+uvicorn server.main:app --reload
+```
+
+Usage: `.\start-server.ps1`
+
+### 2. One-liner for quick testing
+```powershell
+# Complete sequence in one command (setup venv, install deps, start server)
+if (-not (Test-Path venv)) { python -m venv venv }; venv\Scripts\Activate.ps1; pip install -q -r requirements.txt; uvicorn server.main:app --reload
+```
+
+## Checklist for the Assistant
+- [ ] Always use PowerShell syntax (not cmd/batch) for Windows commands
+- [ ] Always suggest killing existing processes on port 8000 before starting server
+- [ ] Always ensure virtual environment is created and activated with `venv\Scripts\Activate.ps1`
+- [ ] Always verify dependencies are installed via `pip install -r requirements.txt`
+- [ ] Always start server with `venv\Scripts\Activate.ps1; uvicorn server.main:app --reload`
+- [ ] Never run `uvicorn` without activating the venv first (it will fail with "command not found")
+- [ ] Always test the health endpoint after server startup with `curl.exe http://127.0.0.1:8000/api/health`
+- [ ] Never skip the venv activation step before launching uvicorn
+- [ ] Never assume the port is free without checking
+- [ ] Use `;` for command chaining in PowerShell (not `&&`)
+
+Remember: A clean, reproducible testing environment prevents 90% of "it works on my machine" issues. Always activate the venv before running uvicorn, and always follow the complete sequence with PowerShell.

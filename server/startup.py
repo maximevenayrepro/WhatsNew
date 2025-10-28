@@ -13,7 +13,7 @@ from server.config import getConfig
 
 logger = logging.getLogger(__name__)
 
-VALIDATION_TIMEOUT_SECONDS: int = 10
+VALIDATION_TIMEOUT_SECONDS: int = 30
 PERPLEXITY_API_URL: str = "https://api.perplexity.ai/chat/completions"
 
 

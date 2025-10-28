@@ -12,6 +12,7 @@ from fastapi.responses import PlainTextResponse
 
 from server.config import loadConfig
 from server.startup import validatePerplexityApiKey
+from server.routes.news import router as news_router
 
 
 logging.basicConfig(
@@ -36,6 +37,9 @@ app.add_middleware(
     allow_headers=["Content-Type"],
     allow_credentials=False,
 )
+
+# Register API routers
+app.include_router(news_router)
 
 
 @app.on_event("startup")

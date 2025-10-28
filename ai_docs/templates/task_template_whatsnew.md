@@ -220,6 +220,19 @@ Planned structure:
 6) Secure key handling (server-only), restrict CORS, avoid logging secrets
 7) Document run instructions and environment variables
 
+### Testing Procedure
+<!-- Always follow the local testing procedure rule -->
+**🚨 CRITICAL:** Before testing any changes, always follow the complete testing sequence defined in `.cursor/local-testing-procedure.mdc`:
+
+1. **Clean port 8000**: Kill any existing process
+2. **Setup venv**: Create/activate virtual environment and install dependencies
+3. **Launch server**: `venv\Scripts\Activate.ps1; uvicorn server.main:app --reload`
+4. **Verify health**: Test `http://127.0.0.1:8000/api/health` returns `{"status":"ok"}`
+
+⚠️ **Never skip venv activation before running uvicorn** - it will fail with "command not found"
+
+See `.cursor/local-testing-procedure.mdc` for complete PowerShell commands and troubleshooting.
+
 ### Communication Preferences
 <!-- This is where you set expectations for how the AI should communicate -->
 Concise French status updates; code and comments in English; highlight blockers/risks early; summarize impacts after each phase

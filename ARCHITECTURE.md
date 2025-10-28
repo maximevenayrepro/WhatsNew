@@ -103,10 +103,45 @@ results = client.search_latest(topic="technology", max_results=5)
 
 - `GET /` — Returns plain text `Hello World` (`text/plain`)
 - `GET /api/health` — Returns JSON `{ "status": "ok" }`
+- `POST /api/get_news` — Accepts `TopicRequest`, returns news items grouped by topic
+
+#### POST /api/get_news
+
+Fetches recent news articles for the specified topics using the Perplexity service.
+
+**Request Body**:
+```json
+{
+  "topics": ["technology", "AI", "Python"]
+}
+```
+
+**Response**: Array of `TopicNewsResponse` objects
+```json
+[
+  {
+    "topic": "technology",
+    "items": [
+      {
+        "title": "Article Title",
+        "snippet": "Brief summary of the article...",
+        "url": "https://example.com/article",
+        "topic": "technology"
+      }
+    ]
+  }
+]
+```
+
+**Behavior**:
+- Fetches up to 5 news items per topic from the last 24 hours
+- Returns empty items array if no news found for a topic
+- Returns 500 if service layer fails
+
+**Location**: `server/routes/news.py`
 
 ### Planned Endpoints
 
-- `POST /api/get_news` — Accepts `TopicRequest`, returns news items grouped by topic
 - `POST /api/set_key` — Stores and validates Perplexity API key (server-side only)
 
 ## Security Considerations
@@ -137,6 +172,9 @@ WhatsNew/
 │   ├── models.py            # Pydantic data models
 │   ├── config.py            # Configuration loader
 │   ├── startup.py           # Startup validation logic
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   └── news.py          # News API routes
 │   └── services/
 │       ├── __init__.py
 │       └── perplexity_client.py  # Perplexity API wrapper
