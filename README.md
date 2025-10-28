@@ -58,7 +58,6 @@ cp config/local_settings.json.example config/local_settings.json
 
 **Important:** The `config/local_settings.json` file is gitignored and should never be committed to version control.
 
-
 ## Run the Server
 
 After installing requirements and activating the virtual environment, start the FastAPI app with Uvicorn:
@@ -69,42 +68,30 @@ uvicorn server.main:app --reload
 
 The server listens on `http://127.0.0.1:8000` by default.
 
-## Data Models
+## Features
 
-The backend uses Pydantic models for type-safe request and response payloads:
+### Current Features
 
-- **`NewsItem`**: Represents a single news article with `title`, `snippet`, `url`, and `topic` fields
-- **`TopicRequest`**: Request payload containing a list of topics to query
+- FastAPI backend with health check endpoint
+- Configuration management for Perplexity API key
+- Service layer ready for news search integration
 
-These models are defined in `server/models.py` and enforce validation rules (e.g., non-empty strings, minimum list length).
+### Planned Features
 
-## Services
+- News search by topic using Perplexity AI
+- Frontend dashboard with topic selection
+- Modal view for article details
+- Error handling and empty states
 
-### Perplexity Client
+## Quick Test
 
-The `PerplexityClient` service (`server/services/perplexity_client.py`) provides a stable interface for searching recent news articles.
-
-**Current implementation**: Returns fake deterministic data to enable frontend development without requiring Perplexity API credentials. The fake data includes sample articles for topics like "technology", "politics", and "sports".
-
-**Usage example**:
-```python
-from server.services.perplexity_client import PerplexityClient
-
-client = PerplexityClient()
-results = client.search_latest(topic="technology", max_results=5)
-# Returns a list of NewsItem objects
-```
-
-The real Perplexity API integration will replace this fake implementation in a future update.
-
-## Endpoints
-
-- `GET /` — returns plain text `Hello World` (`text/plain`)
-- `GET /api/health` — returns JSON `{ "status": "ok" }`
-
-### Quick Test
+Test the running server:
 
 ```bash
 curl http://127.0.0.1:8000/
 curl http://127.0.0.1:8000/api/health
 ```
+
+## Documentation
+
+For technical details about the architecture, data models, services, and API endpoints, see [ARCHITECTURE.md](ARCHITECTURE.md).

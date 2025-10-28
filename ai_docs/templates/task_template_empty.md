@@ -153,7 +153,9 @@ TODO: Break your work into phases with specific tasks and file paths
 
 TODO: Define how you want the AI to track and report progress on tasks
 
-- Update `README.md` upon task completion to reflect changes (features, setup, usage)
+### Documentation Updates
+- Update `README.md` only for user-facing changes (features, installation, run instructions)
+- Update `ARCHITECTURE.md` for technical changes (data models, services, API endpoints, architecture)
 
 ---
 

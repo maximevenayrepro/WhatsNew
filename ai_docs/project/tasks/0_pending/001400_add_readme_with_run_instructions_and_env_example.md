@@ -5,10 +5,10 @@
 ## 1. Task Overview
 
 ### Task Title
-**Title:** Add README with run instructions and config examples
+**Title:** Polish README and ARCHITECTURE.md documentation
 
 ### Goal Statement
-**Goal:** Provide a concise README explaining how to set up the venv, install dependencies, run the server, and prepare local config files.
+**Goal:** Ensure README.md is user-focused (setup, install, run, features) and ARCHITECTURE.md contains all technical details (models, services, API, architecture).
 
 ---
 
@@ -19,19 +19,19 @@
 - **Language:** Python 3.11+, JavaScript (ES6)
 
 ### Current State
-Working MVP components but no documentation for running locally.
+Documentation structure exists but needs final review and polish for completeness.
 
 ---
 
 ## 3. Context & Problem Definition
 
 ### Problem Statement
-Contributors need clear steps to run the project on Windows PowerShell.
+Documentation must be split: README.md for users (setup, run, features), ARCHITECTURE.md for developers (technical details, models, services).
 
 ### Success Criteria
-- [ ] `README.md` includes setup, install, and run steps
-- [ ] Example `config/local_settings.example.json` documented
-- [ ] Notes on CORS and local-only scope
+- [ ] `README.md` contains only user-facing content (install, run, features)
+- [ ] `ARCHITECTURE.md` contains all technical details (models, services, API, architecture)
+- [ ] Both files are complete and up-to-date with current implementation
 
 ---
 
@@ -43,15 +43,16 @@ Local prototype; keep instructions minimal and accurate.
 ## 5. Technical Requirements
 
 ### Functional Requirements
-- Add Windows-friendly commands for venv and Uvicorn
-- Document endpoints and basic usage
-- Document local config file location/format
+- README.md: project description, features list, installation, configuration, run instructions
+- ARCHITECTURE.md: tech stack, data models, services, API endpoints, security, file structure
+- Clear separation of concerns between both files
 
 ### Non-Functional Requirements
-- Keep it concise and skimmable
+- Keep both files concise and skimmable
+- Use consistent formatting and structure
 
 ### Technical Constraints
-- No secrets in examples
+- No secrets in examples or documentation
 
 ---
 
@@ -71,25 +72,32 @@ None.
 ---
 
 ## 9. Implementation Plan
-- Create/Update root `README.md`
-- Add example JSON content inline or as a file
+- Review and polish `README.md` for user-facing completeness
+- Review and polish `ARCHITECTURE.md` for technical completeness
+- Ensure both files accurately reflect current implementation
 
 ---
 
 ## 10. Task Completion Tracking
-- A new developer can follow steps and run the app
+- Both files reviewed and complete
+- Clear separation between user docs (README) and technical docs (ARCHITECTURE)
+
+### Documentation Updates
+- Update `README.md` only for user-facing changes (features, installation, run instructions)
+- Update `ARCHITECTURE.md` for technical changes (data models, services, API endpoints, architecture)
 
 ---
 
 ## 11. File Structure & Organization
-- `README.md`
-- `config/local_settings.example.json` (optional)
+- `README.md` (user-facing)
+- `ARCHITECTURE.md` (technical)
 
 ---
 
 ## 12. AI Agent Instructions
-1) Write clear setup and run instructions
-2) Include example config structure
+1) Review both files for completeness
+2) Ensure proper separation of concerns
+3) Update any outdated information
 
 ---
 

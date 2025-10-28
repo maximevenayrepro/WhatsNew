@@ -83,7 +83,10 @@ None.
 
 ## 10. Task Completion Tracking
 - Verified real results for sample topics (e.g., "Tech")
-- README updated to reflect this task (summary and usage impact)
+
+### Documentation Updates
+- Update `README.md` only for user-facing changes (features, installation, run instructions)
+- Update `ARCHITECTURE.md` for technical changes (data models, services, API endpoints, architecture)
 
 ---
 

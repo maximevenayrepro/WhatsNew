@@ -189,7 +189,11 @@ Phase 6 – Validation & polish:
 ### Real-Time Progress Tracking
 <!-- This is where you tell the AI agent to update progress as work is completed -->
 
-Track via checklist in README and concise status updates per milestone; log server events; AI agent updates TODO statuses upon completing phases
+Track via concise status updates per milestone; log server events; AI agent updates TODO statuses upon completing phases
+
+### Documentation Updates
+- Update `README.md` only for user-facing changes (features, installation, run instructions)
+- Update `ARCHITECTURE.md` for technical changes (data models, services, API endpoints, architecture)
 
 ---
 
