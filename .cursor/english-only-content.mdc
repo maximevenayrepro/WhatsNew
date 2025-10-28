@@ -1,0 +1,151 @@
+---
+globs: "**/*.*"
+alwaysApply: true
+---
+# English-Only Repository Content
+
+## Overview
+This rule enforces that all repository content is written in English. It ensures consistency across code, comments, documentation, configuration values, and UI strings, regardless of the conversation language used in the chat or tasks.
+
+## Rule: All repository content must be in English
+1. **Always use** English for source code identifiers, comments, docstrings, documentation, configuration values, UI strings, and test names.
+2. **Never use** non-English text inline in code, comments, docs, or configuration. Do not mix languages.
+3. **Always use** English as the source-of-truth for any localization/i18n. If localization is required, keep English strings as the default and manage translations in dedicated locale files.
+4. **Fix the root cause** by extracting non-English strings into data or translation files instead of placing them inline.
+
+## Filenames and Directory Names (Mandatory)
+1. Use English words only in all filenames and directory names. Avoid non-English words and accents.
+2. Allowed characters: `a-z`, `0-9`, hyphen `-`, underscore `_`, and dot `.` (for extensions). Prefer lowercase names.
+3. Separate words with hyphen or underscore. Do not use spaces or locale-specific characters.
+4. Task files under `ai_docs/project/tasks/**` must follow: `<6-digit step>_<english_snake_case>.md`.
+   - Example: `000200_add_cors_localhost_only.md`
+5. Do not ignore or obfuscate source directories (e.g., keep `server/`, `public/`). Only content language and naming must be English.
+
+## Common Violations and Solutions
+
+### ❌ BAD: Non-English comment or docstring (Python)
+```python
+# Cette fonction récupère les dernières nouvelles
+def fetch_latest_news() -> dict:
+    """Retourne les données des actualités."""
+    return {}
+```
+
+### ✅ GOOD: English comment and docstring (Python)
+```python
+# This function retrieves the latest news items
+def fetch_latest_news() -> dict:
+    """Return the latest news data."""
+    return {}
+```
+
+### ❌ BAD: Non-English UI string inline (JavaScript)
+```javascript
+const buttonLabel = "Actualiser";
+```
+
+### ✅ GOOD: English UI string (JavaScript)
+```javascript
+const buttonLabel = "Refresh";
+```
+
+### ❌ BAD: Non-English section in docs (Markdown)
+```markdown
+## Fonctionnalités
+Cette application liste les nouvelles locales.
+```
+
+### ✅ GOOD: English docs (Markdown)
+```markdown
+## Features
+This application lists local news.
+```
+
+## When You Think You Need Exceptions
+
+### External data or quoted text
+```python
+# ❌ BAD
+# Ajouter cet exemple français comme commentaire explicatif
+sample_text = "Dernières nouvelles locales"
+
+# ✅ GOOD
+# Keep original non-English text only as data when required by the product
+sample_text = "Dernières nouvelles locales"  # Source data; surrounding code and comments remain English
+```
+
+### Product localization requirements
+```javascript
+// ❌ BAD
+// Inline non-English strings directly in components
+const title = "Nouvelles";
+
+// ✅ GOOD
+// Use English as default source and manage translations separately
+const en = { title: "News" };
+const fr = { title: "Actualités" };
+```
+
+## Specific Project Patterns
+```python
+# ✅ GOOD: FastAPI docstrings and responses in English
+def get_news() -> dict:
+    """Fetch and return news items from the last 24 hours."""
+    return {"items": []}
+```
+
+```javascript
+// ✅ GOOD: Frontend static text in English
+/** @type {string} */
+const emptyStateMessage = "No news found for the selected topics.";
+```
+
+```json
+{
+  "cors": ["http://localhost:5173"],
+  "description": "Local development configuration"
+}
+```
+
+## Alternative Solutions
+
+### 1. Introduce i18n dictionaries (keep English as the default)
+```javascript
+const messages = {
+  en: { refresh: "Refresh", details: "Details" },
+  fr: { refresh: "Actualiser", details: "Détails" }
+};
+
+function t(locale, key) {
+  return messages[locale]?.[key] ?? messages.en[key];
+}
+```
+
+### 2. Use explicit English descriptions in models
+```python
+from pydantic import BaseModel, Field
+
+class NewsItem(BaseModel):
+    title: str = Field(description="Human-readable headline")
+    snippet: str = Field(description="Short preview of the content")
+    url: str = Field(description="Canonical article URL")
+    topic: str = Field(description="Assigned topic label")
+```
+
+## Tool Configuration (Optional)
+```json
+{
+  "cSpell.language": "en",
+  "files.associations": {
+    "*.md": "markdown"
+  }
+}
+```
+
+## Checklist for the Assistant
+- [ ] Always produce code, comments, docstrings, and docs in English
+- [ ] Avoid non-English words in identifiers, filenames, and inline strings
+- [ ] Ensure all filenames and directories follow English naming rules above
+- [ ] Keep UI text in English or read from an English-default i18n dictionary
+- [ ] Convert examples and templates to English before adding to the repo
+
